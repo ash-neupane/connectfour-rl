@@ -1,7 +1,7 @@
 # Connect 4 RL Agent - Systems-Focused Implementation
 
 ## Project Overview
-A performance-oriented Connect 4 agent using self-play RL, designed to showcase systems engineering skills for ML infrastructure roles. Focus is on speed, profiling, and scalability rather than achieving state-of-the-art playing strength.
+A performance-oriented Connect 4 agent using self-play RL, designed to showcase systems engineering skills for ML infrastructure roles. Focus is on speed, profiling, and scalability rather than achieving state-of-the-art playing strength. The training runs on a modern Macbook pro. It's parallelizes using multiprocessing.Pool on CPU compute.
 
 ## Directory Structure
 ```
@@ -26,20 +26,20 @@ The conda environment is called `connect4-rl`. We should use poetry for dependen
 ## Core Design Principles
 - **Vectorization First**: All operations should handle batch_size games simultaneously
 - **Profile Everything**: Every major function should have profiling decorators
-- **Minimal Dependencies**: PyTorch, Numba, NumPy, and profiling tools only
+- **Minimal Dependencies**: NumPy (with Numba), and profiling tools only. All numeric operations should be done with Numpy
 - **Systems Focus**: Optimize for throughput (games/second) over playing strength
 
 ## Code Style & Patterns
 - Use type hints for all function signatures
+- Never use in-line comments.
 - Implement `@profile` decorators for performance-critical functions
 - Prefer NumPy operations over loops for board manipulation
-- Use torch.jit.script where beneficial for hot paths
+- Use @numba.njit() where beneficial for hot paths
 - Keep batch dimensions as first axis consistently
 
 ## Implementation Guidelines
 
 ### Game Engine (game.py)
-- Use uint64 bitboards for position representation
 - Implement parallel move validation using NumPy broadcasting
 - Batch terminal state detection
 - No single-game methods - everything operates on batches
@@ -61,12 +61,6 @@ The conda environment is called `connect4-rl`. We should use poetry for dependen
 - Speed profiling: Time each phase (generation, training, evaluation)
 - Bottleneck analysis: Identify top 3 slowest operations
 - Output clean JSON for visualization
-
-## Performance Targets
-- **Minimum**: 1,000 games/second on single GPU
-- **Target**: 10,000 games/second on single GPU
-- **Memory**: < 2GB GPU memory for batch_size=1024
-- **CPU Utilization**: > 80% during self-play generation
 
 ## Common Pitfalls to Avoid
 - Don't implement single-game logic then vectorize - start vectorized
